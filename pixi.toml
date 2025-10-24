@@ -1,0 +1,25 @@
+[workspace]
+authors = ["Andrey Tatarinov <a@tatarinov.co>"]
+channels = ["conda-forge"]
+name = "datapipe-perf"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "3.12.*"
+
+[environments]
+default = { solve-group = "default" }
+
+[activation.env]
+TEST_DB_ENV = "postgres"
+POSTGRES_HOST = "localhost"
+POSTGRES_PORT = "5432"
+
+[pypi-dependencies]
+pytest = "*"
+pytest-cases = "*"
+datapipe-core = { version = "==0.14.6a3" }
+psycopg2-binary = "*"
