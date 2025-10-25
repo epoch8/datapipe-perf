@@ -23,3 +23,6 @@ pytest = "*"
 pytest-cases = "*"
 datapipe-core = { version = "==0.14.6a3" }
 psycopg2-binary = "*"
+psutil = "*"
+toml = "*"
+pydantic-settings = ">=2.11.0, <3"
