@@ -155,11 +155,8 @@ class BenchmarkRunner:
                 "runtime_env": os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown"),
             }
 
-            # Add system info to metadata if not already present
-            if "metadata" not in benchmark_result:
-                benchmark_result["metadata"] = {}
-            if "system_info" not in benchmark_result["metadata"]:
-                benchmark_result["metadata"]["system_info"] = get_system_info()
+            benchmark_result["system_info"] = get_system_info()
+            benchmark_result["benchmark_name"] = benchmark_name
 
             return benchmark_result
 

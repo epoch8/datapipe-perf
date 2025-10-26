@@ -5,6 +5,15 @@ name = "datapipe-perf"
 platforms = ["linux-64"]
 version = "0.1.0"
 
+[dependencies]
+python = ">=3.12.12,<3.15"
+pandas = "*"
+numpy = "<2"  # почему-то datapipe-core требует numpy<2
+altair = ">=5.5.0,<6"
+
+[pypi-dependencies]
+marimo = {version = ">=0.17.2, <0.18", extras = ["all"]}
+
 ### Python 3.12
 
 [feature.py12.dependencies]
@@ -22,6 +31,10 @@ types-toml = "*"
 
 [feature.dtp-stable.pypi-dependencies]
 datapipe-core = { version = "==0.14.5" }
+
+### Datapipe swcv
+[feature.dtp-pr355.pypi-dependencies]
+datapipe-core = { git = "https://github.com/epoch8/datapipe.git", rev = "9e8d3d5669a2fe756c3dd5c3bac475080695d353" } # branch = "feat/fill-transaction-meta-on-chunk-store"
 
 ### Postgres 13
 
@@ -71,6 +84,8 @@ cleanup-db = "rm -f benchmark.db"
 py12-dtp-stable-sqlite = ["py12", "dtp-stable", "db-sqlite"]
 py12-dtp-stable-postgres13 = ["py12", "dtp-stable", "db-postgres13"]
 py12-dtp-stable-postgres18 = ["py12", "dtp-stable", "db-postgres18"]
+
+py12-dtp-pr355-postgres13 = ["py12", "dtp-pr355", "db-postgres13"]
 
 
 [tasks]
