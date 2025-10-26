@@ -5,24 +5,74 @@ name = "datapipe-perf"
 platforms = ["linux-64"]
 version = "0.1.0"
 
-[tasks]
-
 [dependencies]
 python = "3.12.*"
-
-[environments]
-default = { solve-group = "default" }
-
-[activation.env]
-TEST_DB_ENV = "postgres"
-POSTGRES_HOST = "localhost"
-POSTGRES_PORT = "5432"
 
 [pypi-dependencies]
 pytest = "*"
 pytest-cases = "*"
-datapipe-core = { version = "==0.14.6a3" }
-psycopg2-binary = "*"
 psutil = "*"
 toml = "*"
 pydantic-settings = ">=2.11.0, <3"
+types-toml = "*"
+
+### Datapipe stable
+
+[feature.dtp-stable.pypi-dependencies]
+datapipe-core = { version = "==0.14.5" }
+
+### Postgres 13
+
+[feature.db-postgres13.pypi-dependencies]
+psycopg2-binary = "*"
+
+[feature.db-postgres13.activation.env]
+TEST_DB_ENV = "postgres"
+POSTGRES_HOST = "localhost"
+POSTGRES_PORT = "5432"
+POSTGRES_PASSWORD = "pass"
+
+[feature.db-postgres13.tasks]
+setup-db = "docker run --name datapipe-postgres13 -e POSTGRES_PASSWORD=pass -p 5432:5432 -d postgres:13"
+wait-for-db = "sh -c 'until docker exec datapipe-postgres13 pg_isready -U postgres; do sleep 1; done'"
+cleanup-db = "docker rm -f datapipe-postgres13"
+
+### Postgres 18
+
+[feature.db-postgres18.pypi-dependencies]
+psycopg2-binary = "*"
+
+[feature.db-postgres18.activation.env]
+TEST_DB_ENV = "postgres"
+POSTGRES_HOST = "localhost"
+POSTGRES_PORT = "5432"
+POSTGRES_PASSWORD = "pass"
+
+[feature.db-postgres18.tasks]
+setup-db = "docker run --name datapipe-postgres18 -e POSTGRES_PASSWORD=pass -p 5432:5432 -d postgres:18"
+wait-for-db = "sh -c 'until docker exec datapipe-postgres18 pg_isready -U postgres; do sleep 1; done'"
+cleanup-db = "docker rm -f datapipe-postgres18"
+
+### SQlite
+
+[feature.db-sqlite.pypi-dependencies]
+datapipe-core = { extras = ["sqlite"] }
+
+[feature.db-sqlite.tasks]
+setup-db = "echo 'its sqlite, no setup needed'"
+wait-for-db = "echo 'its sqlite, no wait needed'"
+cleanup-db = "rm -f benchmark.db"
+
+###
+
+[environments]
+dtp-stable-sqlite = ["dtp-stable", "db-sqlite"]
+dtp-stable-postgres13 = ["dtp-stable", "db-postgres13"]
+dtp-stable-postgres18 = ["dtp-stable", "db-postgres18"]
+
+[tasks]
+# benchmark-run = "python -m benchmark.dv_pipeline.incremental_update_throughput"
+benchmark-run = "python run_benchmarks.py"
+
+[tasks.benchmark]
+depends-on = ["setup-db", "wait-for-db", "benchmark-run", "cleanup-db"]
