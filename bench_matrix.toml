@@ -6,6 +6,7 @@
 # Incremental transform performance benchmark
 [benchmarks.dv__incremental_transform_performance]
 module = "benchmark.dv_pipeline.incremental_transform_performance"
+timeout = 300
 parameters = [
     { num_records = 10_000 },
     { num_records = 100_000 },
@@ -15,6 +16,7 @@ parameters = [
 # Incremental update throughput benchmark
 [benchmarks.dv__incremental_update_throughput]
 module = "benchmark.dv_pipeline.incremental_update_throughput"
+timeout = 300
 parameters = [
     { initial_records = 10_000, new_records = 1_000 },
     { initial_records = 100_000, new_records = 1_000 },
@@ -24,6 +26,3 @@ parameters = [
 [settings]
 # Global benchmark settings
 results_dir = "~/.datapipe_benchmarks"
-chunk_size = 100
-batch_size = 50_000
-use_offset_optimization = true

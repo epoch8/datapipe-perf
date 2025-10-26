@@ -32,7 +32,7 @@ class BenchmarkSettings(BaseSettings):
     initial_records: int = 100
     new_records: int = 100
     chunk_size: int = 100
-    batch_size: int = 50000
+    batch_size: int = 1000
 
 
 benchmark_settings = BenchmarkSettings()  # type: ignore

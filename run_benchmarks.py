@@ -96,7 +96,7 @@ class BenchmarkRunner:
 
     def run_benchmark(
         self, benchmark_name: str, parameters: Dict[str, Any]
-    ) -> Dict[str, Any] | None:
+    ) -> Dict[str, Any]:
         """
         Run a single benchmark with given parameters.
 
@@ -105,10 +105,13 @@ class BenchmarkRunner:
             parameters: Parameter dictionary for the benchmark
 
         Returns:
-            Benchmark result dictionary or None if failed
+            Benchmark result dictionary with success status and data or error info
         """
         benchmark_config = self.config["benchmarks"][benchmark_name]
         module_name = benchmark_config["module"]
+
+        # Extract timeout from benchmark config
+        timeout = benchmark_config.get("timeout", None)
 
         # Prepare environment variables
         env = os.environ.copy()
@@ -125,6 +128,8 @@ class BenchmarkRunner:
         print(
             f"Running {benchmark_name} (module: {module_name}) with parameters: {parameters}"
         )
+        if timeout:
+            print(f"Timeout: {timeout} seconds")
 
         result = None
 
@@ -136,15 +141,18 @@ class BenchmarkRunner:
                 capture_output=True,
                 text=True,
                 check=True,
+                timeout=timeout,
             )
 
             # Parse JSON output
             benchmark_result = json.loads(result.stdout)
 
-            # Add runner metadata including system info
+            # Add success flag and runner metadata including system info
+            benchmark_result["success"] = True
             benchmark_result["runner_metadata"] = {
                 "config_file": str(self.config_file),
                 "run_timestamp": datetime.now().isoformat(),
+                "runtime_env": os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown"),
             }
 
             # Add system info to metadata if not already present
@@ -155,15 +163,55 @@ class BenchmarkRunner:
 
             return benchmark_result
 
+        except subprocess.TimeoutExpired as e:
+            print(f"Timeout running {benchmark_name}: {e}")
+            return {
+                "success": False,
+                "error_type": "timeout",
+                "benchmark_name": benchmark_name,
+                "parameters": parameters,
+                "message": str(e),
+                "runner_metadata": {
+                    "config_file": str(self.config_file),
+                    "run_timestamp": datetime.now().isoformat(),
+                    "runtime_env": os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown"),
+                },
+            }
         except subprocess.CalledProcessError as e:
             print(f"Error running {benchmark_name}: {e}")
             print(f"Stdout: {e.stdout}")
             print(f"Stderr: {e.stderr}")
-            return None
+            return {
+                "success": False,
+                "error_type": "process_error",
+                "benchmark_name": benchmark_name,
+                "parameters": parameters,
+                "message": str(e),
+                "stdout": e.stdout,
+                "stderr": e.stderr,
+                "returncode": e.returncode,
+                "runner_metadata": {
+                    "config_file": str(self.config_file),
+                    "run_timestamp": datetime.now().isoformat(),
+                    "runtime_env": os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown"),
+                },
+            }
         except json.JSONDecodeError as e:
             print(f"Error parsing JSON output from {benchmark_name}: {e}")
             print(f"Raw output: {result.stdout if result else '-'}")
-            return None
+            return {
+                "success": False,
+                "error_type": "json_parse_error",
+                "benchmark_name": benchmark_name,
+                "parameters": parameters,
+                "message": str(e),
+                "raw_output": result.stdout if result else None,
+                "runner_metadata": {
+                    "config_file": str(self.config_file),
+                    "run_timestamp": datetime.now().isoformat(),
+                    "runtime_env": os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown"),
+                },
+            }
 
     def run_benchmark_suite(self, benchmark_name: str) -> List[Dict[str, Any]]:
         """
@@ -189,21 +237,24 @@ class BenchmarkRunner:
             print(f"\n--- Run {i}/{len(benchmark_config['parameters'])} ---")
 
             result = self.run_benchmark(benchmark_name, parameters)
-            if result:
-                results.append(result)
+            results.append(result)
 
-                # Save individual result
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                param_str = "_".join(f"{k}{v}" for k, v in parameters.items())
-                filename = f"{benchmark_name}_{param_str}_{timestamp}.json"
+            # Save individual result
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            runtime_env = os.environ.get("PIXI_ENVIRONMENT_NAME", "unknown")
+            param_str = "_".join(f"{k}{v}" for k, v in parameters.items())
+            filename = f"{benchmark_name}_{runtime_env}_{param_str}_{timestamp}.json"
 
-                result_file = self.output_dir / filename
-                with open(result_file, "w") as f:
-                    json.dump(result, f, indent=2)
+            result_file = self.output_dir / filename
+            with open(result_file, "w") as f:
+                json.dump(result, f, indent=2)
 
+            if result["success"]:
                 print(f"✓ Results saved to: {result_file}")
             else:
-                print("✗ Benchmark failed")
+                print(
+                    f"✗ Benchmark failed ({result['error_type']}): Results saved to: {result_file}"
+                )
 
         return results
 
@@ -223,26 +274,6 @@ class BenchmarkRunner:
             except Exception as e:
                 print(f"Error running benchmark suite {benchmark_name}: {e}")
                 all_results[benchmark_name] = []
-
-        # Save summary
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        summary_file = self.output_dir / f"benchmark_summary_{timestamp}.json"
-
-        summary = {
-            "run_info": {
-                "timestamp": datetime.now().isoformat(),
-                "config_file": str(self.config_file),
-            },
-            "results": all_results,
-        }
-
-        with open(summary_file, "w") as f:
-            json.dump(summary, f, indent=2)
-
-        print(f"\n{'=' * 60}")
-        print("All benchmarks completed!")
-        print(f"Summary saved to: {summary_file}")
-        print(f"{'=' * 60}")
 
         return all_results
 

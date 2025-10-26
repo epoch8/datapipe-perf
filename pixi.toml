@@ -5,15 +5,17 @@ name = "datapipe-perf"
 platforms = ["linux-64"]
 version = "0.1.0"
 
-[dependencies]
+### Python 3.12
+
+[feature.py12.dependencies]
 python = "3.12.*"
 
-[pypi-dependencies]
+[feature.py12.pypi-dependencies]
 pytest = "*"
 pytest-cases = "*"
 psutil = "*"
 toml = "*"
-pydantic-settings = ">=2.11.0, <3"
+pydantic-settings = "*"
 types-toml = "*"
 
 ### Datapipe stable
@@ -66,9 +68,10 @@ cleanup-db = "rm -f benchmark.db"
 ###
 
 [environments]
-dtp-stable-sqlite = ["dtp-stable", "db-sqlite"]
-dtp-stable-postgres13 = ["dtp-stable", "db-postgres13"]
-dtp-stable-postgres18 = ["dtp-stable", "db-postgres18"]
+py12-dtp-stable-sqlite = ["py12", "dtp-stable", "db-sqlite"]
+py12-dtp-stable-postgres13 = ["py12", "dtp-stable", "db-postgres13"]
+py12-dtp-stable-postgres18 = ["py12", "dtp-stable", "db-postgres18"]
+
 
 [tasks]
 # benchmark-run = "python -m benchmark.dv_pipeline.incremental_update_throughput"
