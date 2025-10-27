@@ -1,3 +1,9 @@
+# Example run
+
+```
+pixi run -e py12-dtp-offsets-postgres13 benchmark
+```
+
 # Main entities:
 
 ## Scenario
