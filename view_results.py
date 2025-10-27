@@ -79,7 +79,7 @@ def _(data_df, mo):
 def _(benchmark_select, data_df, json, mo):
     filtered_by_name_df = data_df[data_df["benchmark_name"] == benchmark_select.value]
     parameters_select = mo.ui.dropdown(
-        filtered_by_name_df["parameters"].apply(lambda x: json.dumps(x)).unique(), 
+        filtered_by_name_df["parameters"].apply(lambda x: json.dumps(x)).unique(),
         label="Select Parameters",
         value=filtered_by_name_df["parameters"].apply(lambda x: json.dumps(x)).unique()[0]
     )
@@ -87,17 +87,32 @@ def _(benchmark_select, data_df, json, mo):
 
 
 @app.cell
-def _(alt, filtered_by_name_df, json, parameters_select):
+def _(filtered_by_name_df, json, mo, parameters_select):
     filtered_df = filtered_by_name_df[
         filtered_by_name_df["parameters"].apply(lambda x: json.dumps(x)) == parameters_select.value
     ]
 
+    # Create checkboxes for step selection
+    available_steps = sorted(filtered_df["step"].unique())
+    step_checkboxes = mo.ui.multiselect(
+        available_steps,
+        label="Select Steps to Display",
+        value=available_steps  # Select all by default
+    )
+    return filtered_df, step_checkboxes
+
+
+@app.cell
+def _(alt, filtered_df, step_checkboxes):
+    # Filter by selected steps
+    chart_df = filtered_df[filtered_df["step"].isin(step_checkboxes.value)]
+
     chart = (
-        alt.Chart(filtered_df)
+        alt.Chart(chart_df)
         .mark_bar()
         .encode(
             x=alt.X("runtime_env:N", title="Runtime Environment"),
-            y=alt.Y("step_value:Q", title="Step Value"),
+            y=alt.Y("step_value:Q", title="Time (seconds)"),
             color="runtime_env:N",
             column="step:N",
         )
@@ -107,8 +122,8 @@ def _(alt, filtered_by_name_df, json, parameters_select):
 
 
 @app.cell
-def _(benchmark_select, chart, mo, parameters_select):
-    mo.vstack([benchmark_select, parameters_select, chart])
+def _(benchmark_select, chart, mo, parameters_select, step_checkboxes):
+    mo.vstack([benchmark_select, parameters_select, step_checkboxes, chart])
     return
 
 
