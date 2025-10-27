@@ -28,7 +28,6 @@ pydantic-settings = "*"
 types-toml = "*"
 
 ### Datapipe stable
-
 [feature.dtp-stable.pypi-dependencies]
 datapipe-core = { version = "==0.14.5" }
 
