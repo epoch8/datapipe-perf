@@ -18,6 +18,7 @@ Output: JSON with benchmark results
 import sys
 
 from datapipe.compute import run_steps
+from datapipe.run_config import RunConfig
 from pydantic_settings import BaseSettings
 
 from benchmark.common import (
@@ -42,6 +43,7 @@ def main(benchmark_settings: BenchmarkSettings = benchmark_settings) -> None:
     """Run the incremental transform performance benchmark."""
 
     app = get_app()
+    run_config = RunConfig(labels={"use_offset_optimization": True})
 
     try:
         source = app.ds.get_table("perf_source")
@@ -59,7 +61,7 @@ def main(benchmark_settings: BenchmarkSettings = benchmark_settings) -> None:
 
         # Step 2: Initial processing (full run)
         with benchmark_timer() as get_step2_time:
-            run_steps(app.ds, app.steps)
+            run_steps(app.ds, app.steps, run_config=run_config)
         step2_time = get_step2_time()
 
         # Verify initial processing
@@ -81,7 +83,7 @@ def main(benchmark_settings: BenchmarkSettings = benchmark_settings) -> None:
 
         # Step 4: Incremental processing
         with benchmark_timer() as get_step4_time:
-            run_steps(app.ds, app.steps)
+            run_steps(app.ds, app.steps, run_config=run_config)
         step4_time = get_step4_time()
 
         # Verify final processing
@@ -120,7 +122,7 @@ def main(benchmark_settings: BenchmarkSettings = benchmark_settings) -> None:
 
         output_benchmark_result(
             "incremental_transform_performance",
-            benchmark_settings.model_dump(),
+            benchmark_settings.model_dump(),  # type: ignore
             measurements,
             metadata,
         )

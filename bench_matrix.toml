@@ -23,6 +23,3 @@ parameters = [
     { initial_records = 1_000_000, new_records = 1_000 }
 ]
 
-[settings]
-# Global benchmark settings
-results_dir = "~/.datapipe_benchmarks"

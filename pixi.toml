@@ -36,6 +36,10 @@ datapipe-core = { version = "==0.14.5" }
 [feature.dtp-pr355.pypi-dependencies]
 datapipe-core = { git = "https://github.com/epoch8/datapipe.git", rev = "9e8d3d5669a2fe756c3dd5c3bac475080695d353" } # branch = "feat/fill-transaction-meta-on-chunk-store"
 
+###
+[feature.dtp-offsets.pypi-dependencies]
+datapipe-core = { git = "https://github.com/halconel/datapipe.git", branch = "Looky-7769/offsets" }
+
 ### Postgres 13
 
 [feature.db-postgres13.pypi-dependencies]
@@ -87,6 +91,7 @@ py12-dtp-stable-postgres18 = ["py12", "dtp-stable", "db-postgres18"]
 
 py12-dtp-pr355-postgres13 = ["py12", "dtp-pr355", "db-postgres13"]
 
+py12-dtp-offsets-postgres13 = ["py12", "dtp-offsets", "db-postgres13"]
 
 [tasks]
 # benchmark-run = "python -m benchmark.dv_pipeline.incremental_update_throughput"
