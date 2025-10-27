@@ -117,5 +117,93 @@ def _():
     return
 
 
+@app.cell
+def _(data, pd):
+    # Prepare data for scaling chart
+    scaling_data = []
+    for i in data:
+        if not i.get("success", False):
+            continue
+        params = i.get("parameters", {})
+        measurements = i.get("measurements", {})
+
+        # Extract data size parameter
+        data_size = params.get("num_records") or params.get("initial_records")
+        if data_size is None:
+            continue
+
+        for step, step_value in measurements.items():
+            if step.startswith("step"):
+                scaling_data.append({
+                    "benchmark_name": i["benchmark_name"],
+                    "runtime_env": i["runner_metadata"]["runtime_env"],
+                    "data_size": data_size,
+                    "step": step,
+                    "step_value": step_value,
+                })
+
+    scaling_df = pd.DataFrame(scaling_data)
+    return (scaling_df,)
+
+
+@app.cell
+def _(scaling_df):
+    scaling_df
+    return
+
+
+@app.cell
+def _(mo, scaling_df):
+    # Dropdown for selecting benchmark for scaling chart
+    scaling_benchmark_select = mo.ui.dropdown(
+        scaling_df["benchmark_name"].unique(),
+        label="Select Benchmark for Scaling Analysis",
+        value=scaling_df["benchmark_name"].unique()[0]
+    )
+    return (scaling_benchmark_select,)
+
+
+@app.cell
+def _(mo, scaling_benchmark_select, scaling_df):
+    # Dropdown for selecting step
+    filtered_scaling_df = scaling_df[scaling_df["benchmark_name"] == scaling_benchmark_select.value]
+    scaling_step_select = mo.ui.dropdown(
+        filtered_scaling_df["step"].unique(),
+        label="Select Step",
+        value=filtered_scaling_df["step"].unique()[0]
+    )
+    return filtered_scaling_df, scaling_step_select
+
+
+@app.cell
+def _(alt, filtered_scaling_df, scaling_step_select):
+    # Create scaling chart
+    step_scaling_df = filtered_scaling_df[filtered_scaling_df["step"] == scaling_step_select.value]
+
+    scaling_chart = (
+        alt.Chart(step_scaling_df)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("data_size:Q", title="Data Size (records)", scale=alt.Scale(type="log")),
+            y=alt.Y("step_value:Q", title="Time (seconds)"),
+            color=alt.Color("runtime_env:N", title="Runtime Environment"),
+            tooltip=["data_size:Q", "step_value:Q", "runtime_env:N"]
+        )
+        .properties(width=600, height=400, title="Scaling: Time vs Data Size")
+    )
+    return (scaling_chart, step_scaling_df)
+
+
+@app.cell
+def _(mo, scaling_benchmark_select, scaling_chart, scaling_step_select):
+    mo.vstack([
+        mo.md("## Scaling Analysis"),
+        scaling_benchmark_select,
+        scaling_step_select,
+        scaling_chart
+    ])
+    return
+
+
 if __name__ == "__main__":
     app.run()
