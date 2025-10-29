@@ -143,7 +143,15 @@ def _(data, pd):
         measurements = i.get("measurements", {})
 
         # Extract data size parameter
-        data_size = params.get("num_records") or params.get("initial_records")
+        # For different benchmarks, use different size parameters:
+        # - incremental_transform_performance: num_records
+        # - incremental_update_throughput: initial_records
+        # - multi_table_write_performance: num_profiles (KEY metric for PR #355)
+        data_size = (
+            params.get("num_records")
+            or params.get("initial_records")
+            or params.get("num_profiles")
+        )
         if data_size is None:
             continue
 

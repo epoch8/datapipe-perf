@@ -1,0 +1,57 @@
+{
+  "benchmark": "incremental_update_throughput",
+  "timestamp": 1761767114.1202514,
+  "parameters": {
+    "initial_records": 10000,
+    "new_records": 1000,
+    "chunk_size": 100,
+    "batch_size": 50000
+  },
+  "measurements": {
+    "step1_load_initial_time": 1.392956018447876,
+    "step2_transform_initial_time": 4.661065101623535,
+    "step3_load_incremental_time": 0.13663125038146973,
+    "step4_transform_incremental_time": 0.47197628021240234,
+    "total_time": 6.662628650665283,
+    "incremental_throughput_rps": 2118.750543035706,
+    "initial_throughput_rps": 2145.4323812205103,
+    "initial_records_processed": 10000,
+    "final_records_processed": 11000,
+    "data_ratio": 0.1,
+    "time_ratio": 0.10125931947356931,
+    "efficiency_score": 0.9875634215189644
+  },
+  "metadata": {
+    "benchmark_description": "Measures incremental update throughput with different data ratios",
+    "steps": [
+      "Load initial dataset",
+      "Initial processing (full run)",
+      "Add new records",
+      "Incremental processing"
+    ],
+    "metrics_explanation": {
+      "data_ratio": "new_records / initial_records",
+      "time_ratio": "incremental_time / initial_time",
+      "efficiency_score": "data_ratio / time_ratio (higher is better)"
+    }
+  },
+  "success": true,
+  "runner_metadata": {
+    "config_file": "bench_matrix.toml",
+    "run_timestamp": "2025-10-29T22:45:14.215857",
+    "runtime_env": "py12-dtp-offsets-postgres13"
+  },
+  "system_info": {
+    "python_version": "3.12.12",
+    "platform": "Linux",
+    "platform_release": "6.8.0-86-generic",
+    "architecture": "x86_64",
+    "cpu_count_logical": 12,
+    "cpu_count_physical": 6,
+    "cpu_freq_mhz": 4022.6167500000006,
+    "memory_total_gb": 15.53,
+    "memory_available_gb": 5.06,
+    "memory_usage_percent": 67.4
+  },
+  "benchmark_name": "dv__incremental_update_throughput"
+}

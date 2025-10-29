@@ -39,6 +39,10 @@ datapipe-core = { git = "https://github.com/epoch8/datapipe.git", rev = "9e8d3d5
 [feature.dtp-offsets.pypi-dependencies]
 datapipe-core = { git = "https://github.com/halconel/datapipe.git", branch = "Looky-7769/offsets" }
 
+###
+[feature.dtp-hybrid.pypi-dependencies]
+datapipe-core = { git = "https://github.com/halconel/datapipe.git", branch = "Looky-7769/offsets-hybrid" }
+
 ### Postgres 13
 
 [feature.db-postgres13.pypi-dependencies]
@@ -55,42 +59,39 @@ setup-db = "docker run --name datapipe-postgres13 -e POSTGRES_PASSWORD=pass -p 5
 wait-for-db = "sh -c 'until docker exec datapipe-postgres13 pg_isready -U postgres; do sleep 1; done'"
 cleanup-db = "docker rm -f datapipe-postgres13"
 
-### Postgres 18
+# ### Postgres 18
 
-[feature.db-postgres18.pypi-dependencies]
-psycopg2-binary = "*"
+# [feature.db-postgres18.pypi-dependencies]
+# psycopg2-binary = "*"
 
-[feature.db-postgres18.activation.env]
-TEST_DB_ENV = "postgres"
-POSTGRES_HOST = "localhost"
-POSTGRES_PORT = "5432"
-POSTGRES_PASSWORD = "pass"
+# [feature.db-postgres18.activation.env]
+# TEST_DB_ENV = "postgres"
+# POSTGRES_HOST = "localhost"
+# POSTGRES_PORT = "5432"
+# POSTGRES_PASSWORD = "pass"
 
-[feature.db-postgres18.tasks]
-setup-db = "docker run --name datapipe-postgres18 -e POSTGRES_PASSWORD=pass -p 5432:5432 -d postgres:18"
-wait-for-db = "sh -c 'until docker exec datapipe-postgres18 pg_isready -U postgres; do sleep 1; done'"
-cleanup-db = "docker rm -f datapipe-postgres18"
+# [feature.db-postgres18.tasks]
+# setup-db = "docker run --name datapipe-postgres18 -e POSTGRES_PASSWORD=pass -p 5432:5432 -d postgres:18"
+# wait-for-db = "sh -c 'until docker exec datapipe-postgres18 pg_isready -U postgres; do sleep 1; done'"
+# cleanup-db = "docker rm -f datapipe-postgres18"
 
 ### SQlite
 
-[feature.db-sqlite.pypi-dependencies]
-datapipe-core = { extras = ["sqlite"] }
+# [feature.db-sqlite.pypi-dependencies]
+# datapipe-core = { extras = ["sqlite"] }
 
-[feature.db-sqlite.tasks]
-setup-db = "echo 'its sqlite, no setup needed'"
-wait-for-db = "echo 'its sqlite, no wait needed'"
-cleanup-db = "rm -f benchmark.db"
+# [feature.db-sqlite.tasks]
+# setup-db = "echo 'its sqlite, no setup needed'"
+# wait-for-db = "echo 'its sqlite, no wait needed'"
+# cleanup-db = "rm -f benchmark.db"
 
 ###
 
 [environments]
-py12-dtp-stable-sqlite = ["py12", "dtp-stable", "db-sqlite"]
 py12-dtp-stable-postgres13 = ["py12", "dtp-stable", "db-postgres13"]
-py12-dtp-stable-postgres18 = ["py12", "dtp-stable", "db-postgres18"]
-
 py12-dtp-pr355-postgres13 = ["py12", "dtp-pr355", "db-postgres13"]
-
 py12-dtp-offsets-postgres13 = ["py12", "dtp-offsets", "db-postgres13"]
+py12-dtp-hybrid-postgres13 = ["py12", "dtp-hybrid", "db-postgres13"]
 
 [tasks]
 # benchmark-run = "python -m benchmark.dv_pipeline.incremental_update_throughput"

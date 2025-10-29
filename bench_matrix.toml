@@ -6,7 +6,7 @@
 # Incremental transform performance benchmark
 [benchmarks.dv__incremental_transform_performance]
 module = "benchmark.dv_pipeline.incremental_transform_performance"
-timeout = 300
+timeout = 3000
 parameters = [
     { num_records = 10_000 },
     { num_records = 100_000 },
@@ -16,10 +16,29 @@ parameters = [
 # Incremental update throughput benchmark
 [benchmarks.dv__incremental_update_throughput]
 module = "benchmark.dv_pipeline.incremental_update_throughput"
-timeout = 300
+timeout = 3000
 parameters = [
     { initial_records = 10_000, new_records = 1_000 },
     { initial_records = 100_000, new_records = 1_000 },
     { initial_records = 1_000_000, new_records = 1_000 }
 ]
 
+# Multi-table write performance benchmark (PR #355 issue test)
+[benchmarks.dv__multi_table_write_performance]
+module = "benchmark.dv_pipeline.multi_table_write_performance"
+timeout = 3000
+parameters = [
+    # Small profiles, growing posts - baseline
+    { num_profiles = 1_000, num_posts = 10_000, new_posts = 1_000 },
+    { num_profiles = 1_000, num_posts = 100_000, new_posts = 1_000 },
+
+    # Growing profiles with constant posts - KEY TEST for PR #355
+    # If write time grows, PR #355 is reading all profiles on each write
+    { num_profiles = 10_000, num_posts = 100_000, new_posts = 1_000 },
+    { num_profiles = 50_000, num_posts = 100_000, new_posts = 1_000 },
+    { num_profiles = 100_000, num_posts = 100_000, new_posts = 1_000 },
+]
+
+[settings]
+# Global benchmark settings
+results_dir = "~/.datapipe_benchmarks"

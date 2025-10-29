@@ -1,0 +1,48 @@
+{
+  "benchmark": "incremental_transform_performance",
+  "timestamp": 1761768317.503722,
+  "parameters": {
+    "num_records": 10000,
+    "new_records": 1000,
+    "chunk_size": 100,
+    "batch_size": 50000
+  },
+  "measurements": {
+    "step1_load_initial_time": 1.2751832008361816,
+    "step2_transform_initial_time": 4.540349245071411,
+    "step3_load_incremental_time": 0.13191962242126465,
+    "step4_transform_incremental_time": 0.455272912979126,
+    "total_time": 6.402724981307983,
+    "incremental_throughput_rps": 2196.484727053923,
+    "initial_records_processed": 10000,
+    "final_records_processed": 11000
+  },
+  "metadata": {
+    "benchmark_description": "Measures incremental transform performance",
+    "steps": [
+      "Load initial dataset",
+      "Initial processing (full run)",
+      "Add new records",
+      "Incremental processing"
+    ]
+  },
+  "success": true,
+  "runner_metadata": {
+    "config_file": "bench_matrix.toml",
+    "run_timestamp": "2025-10-29T23:05:17.598100",
+    "runtime_env": "py12-dtp-hybrid-postgres13"
+  },
+  "system_info": {
+    "python_version": "3.12.12",
+    "platform": "Linux",
+    "platform_release": "6.8.0-86-generic",
+    "architecture": "x86_64",
+    "cpu_count_logical": 12,
+    "cpu_count_physical": 6,
+    "cpu_freq_mhz": 4028.4774166666666,
+    "memory_total_gb": 15.53,
+    "memory_available_gb": 5.2,
+    "memory_usage_percent": 66.5
+  },
+  "benchmark_name": "dv__incremental_transform_performance"
+}

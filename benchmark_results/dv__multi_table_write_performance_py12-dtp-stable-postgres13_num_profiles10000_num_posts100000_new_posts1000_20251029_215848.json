@@ -1,0 +1,55 @@
+{
+  "benchmark": "multi_table_write_performance",
+  "timestamp": 1761764328.1252153,
+  "parameters": {
+    "num_profiles": 10000,
+    "num_posts": 100000,
+    "new_posts": 1000,
+    "chunk_size": 100,
+    "batch_size": 50000
+  },
+  "measurements": {
+    "step1_load_profiles_time": 1.366145372390747,
+    "step2_load_posts_time": 14.299881935119629,
+    "step3_transform_initial_time": 53.723803997039795,
+    "step4_write_new_posts_time": 0.16582274436950684,
+    "step5_transform_incremental_time": 1.264719009399414,
+    "total_time": 70.82037305831909,
+    "write_throughput_rps": 6030.535821863349,
+    "initial_records_processed": 100000,
+    "final_records_processed": 101000
+  },
+  "metadata": {
+    "benchmark_description": "Measures write performance with multiple input tables (PR #355 issue)",
+    "steps": [
+      "Load profiles (small table)",
+      "Load posts (large table)",
+      "Initial processing (full run)",
+      "Write new posts (KEY: PR #355 reads all profiles here)",
+      "Incremental processing"
+    ],
+    "expected_issue": "PR #355: step4_write_new_posts_time should grow with num_profiles",
+    "pipeline_version": "baseline-no-join-keys",
+    "pipeline_description": "No join optimization (loads all profiles)",
+    "join_keys_optimization": false
+  },
+  "success": true,
+  "runner_metadata": {
+    "config_file": "bench_matrix.toml",
+    "run_timestamp": "2025-10-29T21:58:48.228757",
+    "runtime_env": "py12-dtp-stable-postgres13"
+  },
+  "system_info": {
+    "python_version": "3.12.12",
+    "platform": "Linux",
+    "platform_release": "6.8.0-86-generic",
+    "architecture": "x86_64",
+    "cpu_count_logical": 12,
+    "cpu_count_physical": 6,
+    "cpu_freq_mhz": 4027.297916666667,
+    "memory_total_gb": 15.53,
+    "memory_available_gb": 4.93,
+    "memory_usage_percent": 68.3
+  },
+  "benchmark_name": "dv__multi_table_write_performance"
+}
