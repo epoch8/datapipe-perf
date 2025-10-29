@@ -1,0 +1,25 @@
+# Benchmark configuration matrix
+# This file defines the parameters for running benchmarks
+
+[benchmarks]
+
+# Incremental transform performance benchmark
+[benchmarks.dv__incremental_transform_performance]
+module = "benchmark.dv_pipeline.incremental_transform_performance"
+timeout = 300
+parameters = [
+    { num_records = 10_000 },
+    { num_records = 100_000 },
+    { num_records = 1_000_000 }
+]
+
+# Incremental update throughput benchmark
+[benchmarks.dv__incremental_update_throughput]
+module = "benchmark.dv_pipeline.incremental_update_throughput"
+timeout = 300
+parameters = [
+    { initial_records = 10_000, new_records = 1_000 },
+    { initial_records = 100_000, new_records = 1_000 },
+    { initial_records = 1_000_000, new_records = 1_000 }
+]
+
