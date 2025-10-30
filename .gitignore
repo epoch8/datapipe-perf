@@ -1,6 +1,6 @@
 # pixi environments
 .pixi/*
 !.pixi/config.toml
-
+.idea
 
 __pycache__/
