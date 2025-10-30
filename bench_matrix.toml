@@ -20,6 +20,20 @@ timeout = 300
 parameters = [
     { initial_records = 10_000, new_records = 1_000 },
     { initial_records = 100_000, new_records = 1_000 },
-    { initial_records = 1_000_000, new_records = 1_000 }
 ]
 
+[benchmarks.dv__inner_join_transform_performance]
+module = "benchmark.dv_pipeline.inner_join_transform_performance"
+timeout = 1000
+parameters = [
+    { num_records_first_table = 10_000, num_records_second_table = 10_000, new_records = 1_000 },
+    { num_records_first_table = 10_000, num_records_second_table = 10_000, new_records = 1_000 }
+]
+
+[benchmarks.dv__cross_join_transform_performance]
+module = "benchmark.dv_pipeline.cross_join_transform_performance"
+timeout = 1000
+parameters = [
+    { num_records_first_table = 100, num_records_second_table = 100, new_records = 100 },
+    { num_records_first_table = 1_000, num_records_second_table = 1_000, new_records = 100 }
+]
