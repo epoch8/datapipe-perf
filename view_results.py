@@ -117,6 +117,7 @@ def _(alt, filtered_df, step_checkboxes):
             column="step:N",
         )
         .properties(width=200)
+        .resolve_scale(y='independent')
     )
     return (chart,)
 

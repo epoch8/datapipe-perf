@@ -1,6 +1,7 @@
 # pixi environments
 .pixi/*
 !.pixi/config.toml
-
+.idea
+__marimo__
 
 __pycache__/

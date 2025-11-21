@@ -33,11 +33,11 @@ datapipe-core = { version = "==0.14.5" }
 
 ### Datapipe swcv
 [feature.dtp-pr355.pypi-dependencies]
-datapipe-core = { git = "https://github.com/epoch8/datapipe.git", rev = "9e8d3d5669a2fe756c3dd5c3bac475080695d353" } # branch = "feat/fill-transaction-meta-on-chunk-store"
+datapipe-core = { git = "https://github.com/epoch8/datapipe.git", rev = "bd2dbfb33c558a5f270b38ce314dfd9e8a60d8ca" } # branch = "feat/fill-transaction-meta-on-chunk-store"
 
 ###
 [feature.dtp-offsets.pypi-dependencies]
-datapipe-core = { git = "https://github.com/halconel/datapipe.git", branch = "Looky-7769/offsets" }
+datapipe-core = { git = "https://github.com/halconel/datapipe.git", branch = "Looky-7769/offsets-hybrid" }
 
 ### Postgres 13
 
